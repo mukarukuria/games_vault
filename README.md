@@ -2,8 +2,8 @@
 
 A private, personal web application for organising, searching, selecting and evaluating games used in Sunday School classes.
 
-**Live:** _[add Vercel URL after deployment]_
-**Status:** MVP complete · In deployment
+**Live:** _https://games-vault-self.vercel.app/_
+**Status:** MVP complete
 
 ---
 
