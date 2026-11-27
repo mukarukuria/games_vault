@@ -1,32 +1,20 @@
-import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import AppShell from './components/AppShell'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Library from './pages/Library'
+import GameDetail from './pages/GameDetail'
+import GameForm from './pages/GameForm'
 
-function TopBar() {
-  const { session, signOut } = useAuth()
-  const navigate = useNavigate()
-
-  async function handleLogout() {
-    await signOut()
-    navigate('/login', { replace: true })
-  }
-
+// Wraps every protected route in the shell + login check.
+// Defined once so we don't repeat it three times below.
+function PrivatePage({ children }) {
   return (
-    <header className="topbar">
-      <Link to="/" className="brand">Game Vault</Link>
-      <nav className="topnav">
-        <Link to="/">Home</Link>
-        <Link to="/library">Library</Link>
-        {session && (
-          <button className="link-btn" onClick={handleLogout}>
-            Log out
-          </button>
-        )}
-      </nav>
-    </header>
+    <ProtectedRoute>
+      <AppShell>{children}</AppShell>
+    </ProtectedRoute>
   )
 }
 
@@ -34,28 +22,14 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <TopBar />
-        <main className="main">
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/library"
-              element={
-                <ProtectedRoute>
-                  <Library />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </main>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/"           element={<PrivatePage><Dashboard /></PrivatePage>} />
+          <Route path="/library"    element={<PrivatePage><Library /></PrivatePage>} />
+          <Route path="/library/:id" element={<PrivatePage><GameDetail /></PrivatePage>} />
+          <Route path="/library/new"     element={<PrivatePage><GameForm /></PrivatePage>} />
+          <Route path="/library/:id/edit" element={<PrivatePage><GameForm /></PrivatePage>} />
+        </Routes>
       </BrowserRouter>
     </AuthProvider>
   )
