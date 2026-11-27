@@ -184,7 +184,7 @@ export default function GameDetail() {
 // --- The play-session modal ---
 function SessionModal({ gameId, onClose, onSaved }) {
   const [playedOn, setPlayedOn] = useState(
-    new Date().toISOString().slice(0, 10)   // today as YYYY-MM-DD
+    new Date().toISOString().slice(0, 10)
   )
   const [groupSize, setGroupSize] = useState('')
   const [duration, setDuration] = useState('')
@@ -208,14 +208,16 @@ function SessionModal({ gameId, onClose, onSaved }) {
   }
 
   return (
-    <>
-      <div className="sheet-backdrop" onClick={onClose} />
-      <div className="filter-panel" style={{ zIndex: 50 }}>
-        <div className="filter-panel-header">
+    <div className="modal-backdrop" onClick={onClose}>
+      {/* stop click-throughs inside the modal closing it */}
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
           <strong>Record play session</strong>
           <button className="link-btn" onClick={onClose}>Close</button>
         </div>
+
         {error && <p className="error">{error}</p>}
+
         <div className="filter-row">
           <div className="filter-group">
             <label className="filter-label">Date</label>
@@ -228,23 +230,26 @@ function SessionModal({ gameId, onClose, onSaved }) {
               value={groupSize} onChange={(e) => setGroupSize(e.target.value)} />
           </div>
         </div>
+
         <div className="filter-group">
           <label className="filter-label">Duration (minutes)</label>
           <input type="number" min="1" className="filter-input"
             value={duration} onChange={(e) => setDuration(e.target.value)} />
         </div>
+
         <div className="filter-group">
           <label className="filter-label">Notes</label>
           <textarea rows={3} className="filter-input"
             value={notes} onChange={(e) => setNotes(e.target.value)} />
         </div>
-        <div className="filter-panel-footer">
+
+        <div className="modal-footer">
           <button className="link-btn" onClick={onClose}>Cancel</button>
           <button className="filter-done" onClick={handleSave} disabled={saving}>
             {saving ? 'Saving…' : 'Save session'}
           </button>
         </div>
       </div>
-    </>
+    </div>
   )
 }
